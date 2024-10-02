@@ -1,4 +1,4 @@
-### A two-stage Gradient Boosting model for Sulphur Dioxide hot spot mapping in Saint John, New Brunswick
+### A two-stage Gradient Boosting model for Sulphur Dioxide hot spot mapping in Saint John, New Brunswick, Canada
 
 ---------------------------
 
