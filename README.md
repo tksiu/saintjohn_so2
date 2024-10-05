@@ -18,24 +18,35 @@ Please refer to the following hierarchy of the repository structure:
 
     .
     ├── access                   
-        ├──  download.py            # module for downloading data from open-source datasets
+        ├──  gee_export.py            # module for downloading data from Google Earth Engine datasets
+        ├──  osm_export.py            # module for downloading data from OpenStreetMap datasets
+        ├──  reference_grid.py        # module for generating a grid scale as output resolution
+        ├──  docuentation.ipynb       # result documentation
         
     ├── augmentation                   
-        ├──  model.py               # module for data augmentation
-        ├──  demo.ipynb             # result documentation
+        ├──  model.py                   # module for data augmentation
+        ├──  preprocess.py              # module for generating training dataframe
+        ├──  docuentation.ipynb         # result documentation
         
     ├── training
-        ├──  model.py               # module for model training
-        ├──  preprocess.py          # module for preprocessing
-        ├──  predict.py             # module for generating predictions
-        ├──  demo.ipynb             # result documentation
+        ├──  model.py                                           # module for model training
+        ├──  zonal_stats.py                                     # module for preprocessing raster/vector features
+        ├──  prediction.py                                      # module for generating predictions
+        ├──  documentation_get_features.ipynb                   # consolidating features into dataframe (inputs)
+        ├──  documentation_get_outcome.ipynb                    # consolidating outcome (monitored & augmented)
+        ├──  documentation_model.ipynb                          # training performance & results
+        ├──  documentation_zonal_stats.ipynb                    # demonstrating zonal statistics
+        ├──  documentation_feature_importance_table.xlsx        # logging feature importance results
 
     ├── hotspot
-        ├──  hotspot.py             # module for generating and visualizing hot spots
-        ├──  demo.ipynb             # result documentation
+        ├──  hotspot.py                     # module for generating and visualizing hot spots
+        ├──  docuentation.ipynb             # result documentation
         
     ├── src                         # data sources (accessed from non-automated process)
+    ├── archive                     # archived pre-trained models
 
+    >>  Please use <b>sklearn 1.3.0</b> for loading the pre-trained <b>augmentation</b> models.
+        Please use <b>sklearn 1.5.0</b> for loading the pre-trained <b>surface SO2</b> models.
 
 
 
