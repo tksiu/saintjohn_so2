@@ -29,14 +29,14 @@ Please refer to the following hierarchy of the repository structure:
         ├──  docuentation.ipynb         # result documentation
         
     ├── training
-        ├──  model.py                                           # module for model training
-        ├──  zonal_stats.py                                     # module for preprocessing raster/vector features
-        ├──  prediction.py                                      # module for generating predictions
-        ├──  documentation_get_features.ipynb                   # consolidating features into dataframe (inputs)
-        ├──  documentation_get_outcome.ipynb                    # consolidating outcome (monitored & augmented)
-        ├──  documentation_model.ipynb                          # training performance & results
-        ├──  documentation_zonal_stats.ipynb                    # demonstrating zonal statistics
-        ├──  documentation_feature_importance_table.xlsx        # logging feature importance results
+        ├──  model.py                                     # module for model training
+        ├──  zonal_stats.py                               # module for preprocessing raster/vector features
+        ├──  prediction.py                                # module for generating predictions
+        ├──  documentation_get_features.ipynb             # consolidating features into dataframe (inputs)
+        ├──  documentation_get_outcome.ipynb              # consolidating outcome (monitored & augmented)
+        ├──  documentation_model.ipynb                    # training performance & results
+        ├──  documentation_zonal_stats.ipynb              # demonstrating zonal statistics
+        ├──  documentation_feature_importance_table.xlsx  # logging feature importance results
 
     ├── hotspot
         ├──  hotspot.py                     # module for generating and visualizing hot spots
@@ -45,8 +45,9 @@ Please refer to the following hierarchy of the repository structure:
     ├── src                         # data sources (accessed from non-automated process)
     ├── archive                     # archived pre-trained models
 
-    >>  Please use <b>sklearn 1.3.0</b> for loading the pre-trained <b>augmentation</b> models.
-        Please use <b>sklearn 1.5.0</b> for loading the pre-trained <b>surface SO2</b> models.
+
+> Please use <b>sklearn 1.3.0</b> for loading the pre-trained <b>augmentation</b> models. <br>
+> Please use <b>sklearn 1.5.0</b> for loading the pre-trained <b>surface SO2 (daily mean/max)</b> models.
 
 
 
