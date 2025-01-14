@@ -42,7 +42,7 @@ data['SO2_above_0'] = data['mean_so2'].apply(lambda x: 0 if x == 0 else 1)
 
 
 
-##  binary model
+##  binary classification model
 
 def cross_validate_fit_binary_classification(model, X_train, y_train):
 
@@ -74,20 +74,21 @@ def cross_validate_fit_binary_classification(model, X_train, y_train):
     return accuracy, precision, recall, f1score
 
 
+def get_train_test_split_xy_logistic(data, y_var, f_index_start, f_index_end, test_ratio=0.2):
+    
+    y = data[y_var]
+    X = data.iloc[:,f_index_start:f_index_end]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_ratio, random_state=42, stratify=y)
 
-y = data['SO2_above_0']
-X = data.iloc[:,6:323]
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
-
+    return X_train, X_test, y_train, y_test
 
 
 lasso_logistic = Pipeline([("imputer", KNNImputer(n_neighbors=4, weights='uniform')),
                            ("regressor", LogisticRegression(penalty='l1', solver='liblinear'))])
 
 
-
-gbmc = HistGradientBoostingClassifier(max_iter = 5000, learning_rate = 0.001,
-                                      max_depth = 5, max_leaf_nodes = 2 ** 5 - 1,
+gbmc = HistGradientBoostingClassifier(max_iter = 2000, learning_rate = 0.001,
+                                      max_depth = 6, max_leaf_nodes = 2 ** 6 - 1,
                                       random_state=42)
 
 
@@ -143,32 +144,22 @@ def cross_validate_fit_regression(model, X_train, y_train):
     return m1, m2, m3, m4, m5, m6, m7
 
 
+def get_train_test_split_xy_regress(data, y_var, scale_f_index_start, scale_f_index_end, f_index_end, test_ratio=0.2):
 
-endog = np.log(data[data['SO2_above_0'] == 1]['mean_so2'] + 0.001)
-scaler = StandardScaler().fit(data[data['SO2_above_0'] == 1].iloc[:,6:318])
-exog = np.concatenate((
-        scaler.transform(data[data['SO2_above_0'] == 1].iloc[:,6:318]),
-        data[data['SO2_above_0'] == 1].iloc[:,318:359],
-), axis = 1)
-group = data[data['SO2_above_0'] == 1]['id']
-X_train, X_test, y_train, y_test = train_test_split(exog, endog, test_size=0.2, random_state=42, stratify=group)
+    endog = np.log(data[y_var] + 0.001)
+    scaler = StandardScaler().fit(data.iloc[:,scale_f_index_start:scale_f_index_end])
+    exog = np.concatenate((
+            scaler.transform(data.iloc[:,scale_f_index_start:scale_f_index_end]),
+            data.iloc[:,scale_f_index_end:f_index_end],
+    ), axis = 1)
+    group = data['id']
+    X_train, X_test, y_train, y_test = train_test_split(exog, endog, test_size=test_ratio, random_state=42, stratify=group)
 
-
-
-endog = np.log(data[data['SO2_above_0'] == 1]['max_so2'] + 0.001)
-scaler = StandardScaler().fit(data[data['SO2_above_0'] == 1].iloc[:,6:318])
-exog = np.concatenate((
-        scaler.transform(data[data['SO2_above_0'] == 1].iloc[:,6:318]),
-        data[data['SO2_above_0'] == 1].iloc[:,318:359],
-), axis = 1)
-group = data[data['SO2_above_0'] == 1]['id']
-X_train, X_test, y_train, y_test = train_test_split(exog, endog, test_size=0.2, random_state=42, stratify=group)
-
+    return X_train, X_test, y_train, y_test
 
 
 lasso = Pipeline([("imputer", KNNImputer(n_neighbors=8, weights='uniform')),
                   ("regressor", Lasso(alpha=0.1, max_iter=6000, tol=0.00001))])
-
 
 
 gbm = HistGradientBoostingRegressor(max_iter = 5000, learning_rate = 0.001,

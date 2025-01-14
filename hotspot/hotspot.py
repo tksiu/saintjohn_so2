@@ -30,56 +30,39 @@ def spatial_weights(plot_data, spatial_weight_method: str, knn_neighbours=None):
 
 def getis_ord_gi_star(spatial_weight, plot_data, plot_attribute):
 
-    go_hotspot = esda.getisord.G_Local(plot_data[plot_attribute], 
+    go_gi_stats = esda.getisord.G_Local(plot_data[plot_attribute], 
                                        spatial_weight, 
                                        star=True, 
                                        transform='R', 
                                        permutations=1000, 
                                        seed=123)
+
+    sig = go_gi_stats.p_sim < 0.05
+    highs = go_gi_stats > 0
+
+    hotspot = plot_data.loc[(sig & highs), "geometry"]
     
-    return go_hotspot
+    return hotspot
 
 
 
-def hotspot_plot(plot_data, getis_ord_gi_star_hotspot, geo_boundary, point_data):
-
-    fig, ax = plt.subplots(1, 1, figsize=(20, 12))
-    plt.rcParams['hatch.linewidth'] = 3
-
-    ec = "0.5"
-
-    db = gpd.GeoDataFrame(plot_data, crs="epsg:4326")
-
-    ##  1)  Getis-Ord Gi* hotspot
-    # Break observations into significant or not
-    sig = getis_ord_gi_star_hotspot.p_sim < 0.05
-    # Plot HH clusters
-    hh1 = db.loc[(getis_ord_gi_star_hotspot.Zs > 0) & (sig == True), "geometry"]
-    hh1.plot(ax=ax, color="coral", edgecolor=ec, linewidth=0.1, alpha=0.4, facecolor="#000000", hatch="//", label = "Getis-Ord Gi*", aspect=None)
-
-    ##  2)  90-th percentile hotspot
-    # Break observations into significant or not
-    top_quintile = np.percentile(db["mean_so2"], 90)
-    low_quintile = np.percentile(db["mean_so2"], 10)
-    sig = (db["mean_so2"] > top_quintile) | (db["mean_so2"] < low_quintile)
-    # Plot clusters
-    hh2 = db.loc[(db["mean_so2"] > top_quintile) & (sig == True), "geometry"]
-    hh2.plot(ax=ax, color="slateblue", edgecolor=ec, linewidth=0.1, alpha=0.4, facecolor="#000000", hatch="o", label = "90-th Percentile", aspect=None)
-
-    ##  3) add Saint John, or any boundary
-    gpd.GeoDataFrame(geo_boundary).plot(ax=ax, facecolor="none", edgecolor='black', linewidth=0.3, aspect=None)
-
-    #   4) add station locations
-    point_data.plot(ax=ax, color="deepskyblue", markersize=100, edgecolor='black', linewidth=1, aspect=None)
+def top_decile(plot_data, plot_attribute):
     
-    ##  5) add basemap
+    top_decile = np.percentile(plot_data[plot_attribute], 90)
+    hotspot = plot_data.loc[plot_data[plot_attribute] > top_decile, "geometry"]
+
+    return hotspot
+
+
+
+def create_basemap(ax, basemap=contextily.providers.CartoDB.PositronNoLabels, zoom_level=14):
+    
     contextily.add_basemap(
         ax=ax,
         crs="epsg:4326",
-        source=contextily.providers.CartoDB.Positron,
+        source=basemap,
+        zoom=zoom_level
     )
-
-    return fig, ax
 
 
 
@@ -98,32 +81,32 @@ def create_scale_bar(ax, geo_boundary):
     )
     points = points.to_crs(3347)
     scale_meters = points[0].distance(points[1])
-    ax.add_artist(ScaleBar(scale_meters, font_properties={"size": 18}))
+    ax.add_artist(ScaleBar(scale_meters, font_properties={"size": 18}, box_alpha=0.5))
 
 
 
-def create_legends(ax, ec, mode):
+def create_legends(ax, ec, mode, elem_index_start, elem_index_end, pos="best", pos_adjust_x=1, pos_adjust_y=0):
     
-    assert mode in ["polygon","line","point"], NotImplementedError
+    assert mode in ["filled polygon","line","point"], NotImplementedError
 
     if mode == "polygon":
 
         ## add legend
         lines = [
             Patch(facecolor=t.get_facecolor(), hatch=t.get_hatch(), edgecolor=ec)
-            for t in ax.collections[0:-1]
+            for t in ax.collections[elem_index_start:elem_index_end]
         ]
-        labels = [t.get_label() for t in ax.collections[0:-1]]
-        ax.legend(lines, labels, loc="lower right", prop={'size': 18})
+        labels = [t.get_label() for t in ax.collections[elem_index_start:elem_index_end]]
+        ax.legend(lines, labels, loc=pos, prop={'size': 18})
 
     else:
 
         ## add legend
         lines = [
             Line2D([0], [0], linestyle="none", marker="s", markersize=14, markerfacecolor=t.get_facecolor())
-            for t in ax.collections[0:-1]
+            for t in ax.collections[elem_index_start:elem_index_end]
         ]
-        labels = [t.get_label() for t in ax.collections[0:-3]]
-        legend = ax.legend(lines, labels, bbox_to_anchor=(0.6,0), loc="lower right", prop={'size': 18})
+        labels = [t.get_label() for t in ax.collections[elem_index_start:elem_index_end]]
+        legend = ax.legend(lines, labels, bbox_to_anchor=(pos_adjust_x, pos_adjust_y), loc=pos, prop={'size': 18})
 
         ax.add_artist(legend)
