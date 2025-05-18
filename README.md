@@ -8,9 +8,9 @@ To generate the hot spots, we developed a model for estimating the surface $SO_{
 The model comprised of two stages, a binary classifier for determining $SO_{2}$-clean and $SO_{2}$-polluted scenarios, then a regressor on aggregated mean and maximum per monitoring stations in the training dataset.
 We also provide implementation method for hot spot visualization.
 
-This is part of the submission of a manuscript. A pre-printed version is available here:
+The published manuscript is available at:
 
-> <i>TBC</i>
+> <i>Siu, T.K., Greene, C.S., Fong, K.C., 2025. Identifying surface sulphur dioxide (SO2) monitoring gaps in Saint John, Canada with land use regression and hot spot mapping. Atmospheric Environment 353, 121238. <a her="https://doi.org/10.1016/j.atmosenv.2025.121238">https://doi.org/10.1016/j.atmosenv.2025.121238</a></i>
 <br><br>
 
 
