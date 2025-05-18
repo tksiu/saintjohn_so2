@@ -41,6 +41,8 @@ Please refer to the following hierarchy of the repository structure:
     ├── hotspot
         ├──  hotspot.py                     # module for generating and visualizing hot spots
         ├──  docuentation.ipynb             # result documentation
+
+    ├── wind                        # supplementary analysis for wind-drive northeastward transport
         
     ├── src                         # data sources (accessed from non-automated process)
     ├── archive                     # archived pre-trained models
